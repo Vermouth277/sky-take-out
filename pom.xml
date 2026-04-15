@@ -32,13 +32,13 @@
     <commons.lang>2.6</commons.lang>
     <druid>1.2.8</druid>
     <pagehelper>2.1.0</pagehelper>
-    <knife4j>3.0.2</knife4j>
+    <knife4j>4.5.0</knife4j>
+    <springdoc-openapi>2.8.9</springdoc-openapi>
     <aspectj>1.9.22</aspectj>
     <jjwt>0.9.1</jjwt>
     <aliyun.sdk.oss>3.17.4</aliyun.sdk.oss>
     <jaxb-api>2.3.1</jaxb-api>
     <poi>5.2.5</poi>
-    <mysql.version>8.0.30</mysql.version>
   </properties>
 
   <!-- 父工程统一管理所有依赖版本 -->
@@ -62,12 +62,13 @@
       </dependency>
 
       <!-- ==================== 第三方依赖 ==================== -->
+
       <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql.version}</version>
-        <scope>runtime</scope>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <version>9.4.0</version>
       </dependency>
+
       <dependency>
         <groupId>org.mybatis.spring.boot</groupId>
         <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -100,8 +101,13 @@
       </dependency>
       <dependency>
         <groupId>com.github.xiaoymin</groupId>
-        <artifactId>knife4j-spring-boot-starter</artifactId>
+        <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
         <version>${knife4j}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>${springdoc-openapi}</version>
       </dependency>
       <dependency>
         <groupId>org.aspectj</groupId>
