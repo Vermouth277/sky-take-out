@@ -13,7 +13,6 @@ import com.vermouth.service.EmployeeService;
 import com.vermouth.vo.EmployeeLoginVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/employee")
 @Slf4j
-@Tag(name = "员工管理", description = "员工登录、退出相关接口")
+@Tag(name = "员工管理", description = "员工相关接口")
 public class EmployeeController {
 
     @Autowired
