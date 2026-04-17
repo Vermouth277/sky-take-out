@@ -38,7 +38,7 @@ public class Employee implements Serializable {
     private String idNumber;
 
     //账号状态 1正常 0锁定
-    private String status;
+    private Integer status;
 
     //创建时间
     private LocalDateTime createTime;

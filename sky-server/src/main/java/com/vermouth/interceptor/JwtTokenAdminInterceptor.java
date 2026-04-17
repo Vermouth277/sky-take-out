@@ -1,7 +1,9 @@
 package com.vermouth.interceptor;
 
 import com.vermouth.constant.JwtClaimsConstant;
+import com.vermouth.context.BaseContext;
 import com.vermouth.properties.JwtProperties;
+import com.vermouth.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import com.vermouth.utils.JwtUtils;
 
 @Component
 @Slf4j
@@ -32,9 +33,11 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         // 校验令牌
         try {
             log.info("jwt校验:{}", token);
-            Claims claims = JwtUtils.parseJWT(jwtProperties.getAdminTokenName(), token);
+            Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            log.info("当前员工id：",empId);
+            //将当前登录的用户Id存在当前线程的局部变量中
+            BaseContext.setCurrentId(empId);
+            log.info("当前员工id：{}",empId);
 
             // 放行
             return true;
