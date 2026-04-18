@@ -5,7 +5,6 @@ import com.github.pagehelper.PageHelper;
 import com.vermouth.constant.MessageConstant;
 import com.vermouth.constant.PasswordConstant;
 import com.vermouth.constant.StatusConstant;
-import com.vermouth.context.BaseContext;
 import com.vermouth.dto.EmployeeDTO;
 import com.vermouth.dto.EmployeeEditPasswordDTO;
 import com.vermouth.dto.EmployeeLoginDTO;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -31,6 +29,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     EmployeeMapper employeeMapper;
 
+    /**
+     * 用户登陆
+     * @param employeeLoginDTO
+     * @return
+     */
     @Override
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
@@ -77,16 +80,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         //设置默认密码
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
 
-        //设置记录当前创建时间和修改时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-
-        //设置当前记录创建人id和修改人id
-        Long empId = BaseContext.getCurrentId();
-        employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
-
-            employeeMapper.insert(employee);
+        employeeMapper.insert(employee);
     }
 
 
@@ -113,12 +107,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = Employee.builder()
                 .status(status)
                 .id(id)
-                .updateTime(LocalDateTime.now())
-                .updateUser(BaseContext.getCurrentId())
                 .build();
         employeeMapper.update(employee);
     }
 
+    /**
+     * 根据id查询员工信息
+     * @param id
+     * @return
+     */
     @Override
     public Employee getById(Long id) {
         Employee employee = employeeMapper.getById(id);
@@ -126,16 +123,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+    /**
+     * 修改员工信息
+     * @param employeeDTO
+     */
     @Override
     public void update(EmployeeDTO employeeDTO) {
        Employee employee = new Employee();
        BeanUtils.copyProperties(employeeDTO, employee);
 
-       employee.setUpdateTime(LocalDateTime.now());
-       employee.setUpdateUser(BaseContext.getCurrentId());
        employeeMapper.update(employee);
     }
 
+    /**
+     * 修改密码
+     * @param employeeEditPasswordDTO
+     */
     @Override
     public void editPassword(EmployeeEditPasswordDTO employeeEditPasswordDTO) {
         Long empId = employeeEditPasswordDTO.getEmpId();
@@ -152,8 +155,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee updateEmployee = Employee.builder()
                 .id(empId)
                 .password(DigestUtils.md5DigestAsHex(newPassword.getBytes()))
-                .updateTime(LocalDateTime.now())
-                .updateUser(BaseContext.getCurrentId())
                 .build();
         employeeMapper.update(updateEmployee);
     }
