@@ -17,6 +17,7 @@
     order by sort desc
   </select>
 
+  <!-- 更新 -->
   <update id="update" parameterType="Category">
     update category
     <set>
@@ -30,6 +31,7 @@
     where id = #{id}
   </update>
 
+  <!-- 根据类型查分类 -->
   <select id="list" resultType="Category">
     select * from category
     <where>

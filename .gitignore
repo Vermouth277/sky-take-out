@@ -1,0 +1,20 @@
+# IDEA 配置文件
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# 编译生成的 target 目录
+target/
+sky-server/target/
+sky-common/target/
+sky-pojo/target/
+
+# 本地配置文件（重点！防止密钥泄露）
+sky-server/src/main/resources/application-dev.yml
+application-dev.yml
+application-local.yml
+
+# 系统文件
+.DS_Store
+Thumbs.db

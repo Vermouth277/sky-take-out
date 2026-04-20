@@ -1,5 +1,6 @@
 package com.vermouth.config;
 
+import com.vermouth.constant.FilePathConstant;
 import com.vermouth.interceptor.JwtTokenAdminInterceptor;
 import com.vermouth.json.JacksonObjectMapper;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -57,6 +58,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/images/**").addResourceLocations("file:" + FilePathConstant.UPLOAD_FOLDER);
     }
 
     /**
