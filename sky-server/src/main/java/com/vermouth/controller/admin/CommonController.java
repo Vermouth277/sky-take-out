@@ -50,7 +50,7 @@ public class CommonController {
 
             //写入本地
             file.transferTo(new File(FilePathConstant.UPLOAD_FOLDER + objectName));
-            return Result.success("/images/" + objectName);
+            return Result.success("http://localhost:8080/images/" + objectName);
         } catch (IOException e) {
             log.error("文件上传失败：{}", e);
         }

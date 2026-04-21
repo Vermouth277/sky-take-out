@@ -1,6 +1,5 @@
-package com.vermouth.vo;
+package com.vermouth.entity;
 
-import com.vermouth.entity.DishFlavor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,31 +8,39 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DishVO implements Serializable {
+public class Setmeal implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Long id;
-    //菜品名称
+
+    //套餐名称
     private String name;
-    //菜品分类id
+
+    //分类id
     private Long categoryId;
-    //菜品价格
+
+    //套餐价格
     private BigDecimal price;
-    //图片
+
+    //图片路径
     private String image;
-    //描述信息
+
+    //套餐描述
     private String description;
-    //0 停售 1 起售
+
+    //售卖状态 1起售 0停售
     private Integer status;
-    //更新时间
+
+    private LocalDateTime createTime;
+
     private LocalDateTime updateTime;
-    //分类名称
-    private String categoryName;
-    //菜品关联的口味
-    private List<DishFlavor> flavors = new ArrayList<>();
+
+    private Long createUser;
+
+    private Long updateUser;
 }

@@ -22,7 +22,7 @@ public interface DishMapper {
     void insert(Dish dish);
 
     /**
-     * 分页查询菜品
+     * 动态查询菜品
      * @param dishPageQueryDTO
      */
     Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
