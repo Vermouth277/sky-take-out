@@ -41,4 +41,23 @@
     </set>
     where id = #{id}
   </update>
+
+  <select id="list" parameterType="Dish" resultType="Dish">
+    select * from dish
+    <where>
+      <if test="categoryId != null">
+        and category_id = #{categoryId}
+      </if>
+      <if test="status != null">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
+
+  <select id="getCategoryIdByDishId" resultType="java.lang.Long">
+    select distinct  category_id from dish where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+  </select>
 </mapper>

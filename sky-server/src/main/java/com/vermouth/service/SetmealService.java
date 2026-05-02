@@ -2,7 +2,9 @@ package com.vermouth.service;
 
 import com.vermouth.dto.SetmealDTO;
 import com.vermouth.dto.SetmealPageQueryDTO;
+import com.vermouth.entity.Setmeal;
 import com.vermouth.result.PageResult;
+import com.vermouth.vo.DishItemVO;
 import com.vermouth.vo.SetmealExtraVO;
 
 import java.util.List;
@@ -47,4 +49,19 @@ public interface SetmealService {
      * @param ids
      */
     void deleteSetmeal(List<Long> ids);
+
+
+    /**
+     * 根据分类id查询套餐
+     * @param setmeal
+     * @return
+     */
+    List<Setmeal> getByCategoryId(Setmeal setmeal);
+
+    /**
+     *根据套餐id查询包含的菜品
+     * @param id
+     * @return
+     */
+    List<DishItemVO> getDishItemById(Long id);
 }

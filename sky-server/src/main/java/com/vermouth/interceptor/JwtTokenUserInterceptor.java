@@ -1,5 +1,6 @@
 package com.vermouth.interceptor;
 
+
 import com.vermouth.constant.JwtClaimsConstant;
 import com.vermouth.context.BaseContext;
 import com.vermouth.properties.JwtProperties;
@@ -13,14 +14,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * jwt令牌校验的拦截器
+ */
 @Component
 @Slf4j
-public class JwtTokenAdminInterceptor implements HandlerInterceptor {
+public class JwtTokenUserInterceptor implements HandlerInterceptor {
 
     @Autowired
     private JwtProperties jwtProperties;
 
-    @Override
+    /**
+     * 校验jwt
+     *
+     * @param request
+     * @param response
+     * @param handler
+     * @return
+     * @throws Exception
+     */
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //判断当前拦截到的是Controller的方法还是其他资源
         if (!(handler instanceof HandlerMethod)) {
@@ -28,30 +40,26 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // 从请求头中获取令牌
-        String token = request.getHeader(jwtProperties.getAdminTokenName());
+        //1、从请求头中获取令牌
+        String token = request.getHeader(jwtProperties.getUserTokenName());
 
-        // 校验令牌
+        //2、校验令牌
         try {
             log.info("jwt校验:{}", token);
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
-            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            //将当前登录的用户Id存在当前线程的局部变量中
-            BaseContext.setCurrentId(empId);
-            log.info("当前员工id：{}",empId);
-
-            // 放行
+            Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), token);
+            Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+            log.info("当前用户的id：{}", userId);
+            BaseContext.setCurrentId(userId);
+            //3、通过，放行
             return true;
-        } catch (Exception e) {
-            // 校验失败，响应401状态码
-            log.info("jwt校验失败");
+        } catch (Exception ex) {
+            //4、不通过，响应401状态码
             response.setStatus(401);
             return false;
         }
     }
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         BaseContext.removeCurrentId();
     }
 }

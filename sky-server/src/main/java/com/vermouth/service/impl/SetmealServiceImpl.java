@@ -10,6 +10,7 @@ import com.vermouth.mapper.SetmealDishMapper;
 import com.vermouth.mapper.SetmealMapper;
 import com.vermouth.result.PageResult;
 import com.vermouth.service.SetmealService;
+import com.vermouth.vo.DishItemVO;
 import com.vermouth.vo.SetmealExtraVO;
 import com.vermouth.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
@@ -133,5 +134,25 @@ public class SetmealServiceImpl implements SetmealService {
             setmealDishMapper.deleteBatch(ids);
             setmealMapper.deleteBatch(ids);
         }
+    }
+
+    /**
+     * 根据分类id查询套餐
+     * @param setmeal
+     * @return
+     */
+    @Override
+    public List<Setmeal> getByCategoryId(Setmeal setmeal) {
+        return setmealMapper.list(setmeal);
+    }
+
+    /**
+     * 根据套餐id查询包含的菜品
+     * @param id
+     * @return
+     */
+    @Override
+    public List<DishItemVO> getDishItemById(Long id) {
+        return setmealMapper.getDishItemBySetmealId(id);
     }
 }

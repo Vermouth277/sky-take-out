@@ -15,13 +15,21 @@ import com.vermouth.mapper.SetmealDishMapper;
 import com.vermouth.result.PageResult;
 import com.vermouth.service.DishService;
 import com.vermouth.vo.DishVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static com.vermouth.constant.RedisConstant.CACHE_DISH_KEY;
+import static com.vermouth.constant.RedisConstant.CACHE_DISH_TTL;
+
+@Slf4j
 @Service
 public class DishServiceImpl implements DishService {
 
@@ -33,6 +41,9 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     SetmealDishMapper setmealDishMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 新增菜品
@@ -76,6 +87,7 @@ public class DishServiceImpl implements DishService {
      * 菜品批量删除
      * @param ids
      */
+    @Transactional
     @Override
     public void deleteBatch(List<Long> ids) {
         //判断当前菜品是否能够删除---是否存在起售中的菜品？？
@@ -147,6 +159,9 @@ public class DishServiceImpl implements DishService {
             }
             dishFlavorMapper.insertBatch(flavors);
         }
+
+        String key = CACHE_DISH_KEY + dish.getCategoryId();
+        redisTemplate.delete(key);
     }
 
     /**
@@ -163,6 +178,7 @@ public class DishServiceImpl implements DishService {
      * 菜品起售、停售
      * @param status
      */
+    @Transactional
     @Override
     public void updateStatus(Integer status, Long id) {
         Dish dish = Dish.builder()
@@ -171,5 +187,44 @@ public class DishServiceImpl implements DishService {
                 .build();
 
         dishMapper.update(dish);
+        Dish newDish = dishMapper.getById(id);
+        redisTemplate.delete(CACHE_DISH_KEY + newDish.getCategoryId());
+    }
+
+    /**
+     * 条件查询菜品和口味
+     * @param dish
+     * @return
+     */
+    @Override
+    public List<DishVO> listWithFlavor(Dish dish) {
+        //查Redis
+        String key = CACHE_DISH_KEY +  dish.getCategoryId();
+
+        List<DishVO> redisList = (List<DishVO>) redisTemplate.opsForValue().get(key);
+        if (redisList != null && !redisList.isEmpty()) {
+            redisTemplate.expire(key, CACHE_DISH_TTL, TimeUnit.MINUTES);
+            return redisList;
+        }
+
+        //未命中，查数据库
+        List<Dish> dishList = dishMapper.list(dish);
+
+        List<DishVO> dishVOList = new ArrayList<>();
+
+        for (Dish d : dishList) {
+            DishVO dishVO = new DishVO();
+            BeanUtils.copyProperties(d,dishVO);
+
+            //根据菜品id查询对应的口味
+            List<DishFlavor> flavors = dishFlavorMapper.getByDishId(d.getId());
+
+            dishVO.setFlavors(flavors);
+            dishVOList.add(dishVO);
+        }
+
+        //保存到Redis
+        redisTemplate.opsForValue().set(key, dishVOList, CACHE_DISH_TTL, TimeUnit.MINUTES);
+        return dishVOList;
     }
 }
